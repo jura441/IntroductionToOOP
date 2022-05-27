@@ -4,6 +4,7 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+//#define FULL_COMPARISON
 #define delimeter "\n-------------------------------------\n"
 
 class Fraction;
@@ -127,6 +128,17 @@ public:
 		integer--;
 		return old;
 	}
+
+	//			Type-cast operators:
+	explicit operator int() const
+	{
+		return integer;
+	}
+	operator double()const
+	{
+		return integer + (double)numerator / denominator;
+	}
+	
 	//			Methods:
 
 	Fraction& to_proper()
@@ -224,6 +236,7 @@ Fraction operator/(Fraction left, Fraction right)
 	return left.to_improper() * right.inverted();
 }
 
+#ifdef FULL_COMPARISON
 bool operator==(Fraction left, Fraction right)
 {
 	left.to_improper();
@@ -239,7 +252,7 @@ bool operator!=(const Fraction& left, const Fraction& right)
 {
 	return !(left == right);
 }
- 
+
 bool operator>(Fraction left, Fraction right)
 {
 	return
@@ -264,6 +277,8 @@ bool operator>=(const Fraction& left, const Fraction& right)
 	return left < right || left == right;
 }
 
+#endif // FULL_COMPARISON
+
 ostream& operator <<(ostream& os, const Fraction& obj)
 {
 	/*if (obj.get_integer()) os << obj.get_integer();
@@ -278,9 +293,25 @@ ostream& operator <<(ostream& os, const Fraction& obj)
 	return obj.print(os);
 }
 
+istream& operator>>(istream& is, Fraction& obj)
+{
+	int integer, numerator, denominator;
+	is >> integer >> numerator >> denominator;
+	obj.set_integer(integer);
+	obj.set_numerator(numerator);
+	obj.set_denominator(denominator);
+
+	return is;
+}
+
 //#define CONSTRUCTORS_CHEK
 //#define ARITHMETICAL_OPERATORS_CHEK
 //#define INCREMENT_CHEK
+//#define COMPARISON_OPERATORS_CHEK
+//#define OSTREAM_OPERATOR_CHEK
+//#define TYPE_CONVERSONS_BASE
+//#define CONVERSIONS_FROM_OTHER_TO_CLASS
+
 
 	void main()
 {
@@ -330,10 +361,44 @@ ostream& operator <<(ostream& os, const Fraction& obj)
 		}
 #endif // INCREMENT_CHEK
 
-		//cout << (Fraction(1, 2) < Fraction(3, 2)) << endl;
+#ifdef COMPARISON_OPERATORS_CHEK
+		cout << (Fraction(1, 2) < Fraction(3, 2)) << endl;
+#endif // COMPARISON_OPERATORS_CHEK
 
+#ifdef OSTREAM_OPERATOR_CHEK
 		Fraction A(1, 2);
 		A.print(cout) << endl;
-		//cout << A << endl;
+		//cout << A << endl;  
+#endif // OSTREAM_OPERATOR_CHEK
 
+#ifdef TYPE_CONVERSONS_BASE
+		cout << typeid(7 / .2).name() << endl;
+		int a = 2;		// No conversions
+		double b = 3;	// Conversion from less to more
+		int c = b;		// Conversion from more to less without data loss
+		int d = 5.5;	// Conversion from more to less with data loss  
+#endif // TYPE_CONVERSONS_BASE
+
+#ifdef CONVERSIONS_FROM_OTHER_TO_CLASS
+		Fraction A = 5;
+		cout << A << endl;
+
+		Fraction B;
+		cout << "\n -------------------------------\n";
+		B = (Fraction)(8);
+		cout << "\n -------------------------------\n";
+		cout << B << endl;
+#endif // CONVERSIONS_FROM_OTHER_TO_CLASS
+
+		/*Fraction A(2,3,4);
+		int a = (int)A;
+		cout << a << endl;
+		double b = A;
+		cout << b << endl;
+		cout << b << (Fraction(1, 2) == Fraction(5, 11)) << endl;*/
+
+		Fraction A;
+		cout << "Введите простую дробь: ";
+		cin >> A;
+		cout << A << endl;
 } 
