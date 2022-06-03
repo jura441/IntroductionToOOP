@@ -26,33 +26,23 @@ public:
 
 	explicit String(int size = 80):size(size), str(new char[size] {})
 	{
-		//this->size = size;
-		//this->str = new char[size] {};
-		cout << "Def1aConstructor:\t" << this << endl;
+		cout << "Def1aConstructor:" << this << endl;
 	}
-	String(const char* str):size(strlen(str)+1), str(new char[size] {})
+	String(const char* str):String(strlen(str) + 1)  
 	{
 		for (int i = 0; i < size; i++)this->str[i] = str[i];
 		cout << "Constructor:\t" << this << endl;
 	}
-	String(const String& other):size(other.size), str(new char[size] {})
+	String(const String& other):String(other.str)
 	{
-		// CopyConstructor должен выполнять DeepCopy (побитовое копирование)
-		// т.е. выделить новую память, и скопировать в нее содержимое другого объекта.
-		for (int i = 0; i < size; i++)
-		{
-			this->str[i] = other.str[i];
-		}
-		//------------------------------------------------------------
-		cout << "CopyConstructor:\t" << this << endl;
-			
+		cout << "CopyConstructor:" << this << endl;
 	}
 	String(String&& other):size(other.size), str(other.str)
 	{
 		// MoveConstuctor выполняет ShellowCopy (поверхностное копирование)
 		other.size = 0;
 		other.str = nullptr;	//Зануляем адрес памяти в другом объекте, чтобы эту память не удалил диструктор
-		cout << "MoveConstructor:\t" << this << endl;
+		cout << "MoveConstructor:" << this << endl;
 	}
 	~String()
 	{
@@ -123,8 +113,8 @@ std::ostream& operator<<(std::ostream& os, const String& obj)
 
 
 //#define COSTRUCTORS_CHECK
-//#define MOVE_METHODS_CHECK
-#define CALLING_CONSTRUCTORS
+#define MOVE_METHODS_CHECK
+//#define CALLING_CONSTRUCTORS
 
 void main()
 {
@@ -155,10 +145,13 @@ void main()
 	String str2("World");
 	cout << str2 << endl;
 	//String str3 = str1 + " " + str2;	//MoveConstructor
-	String str3;
+	String str3 = str1 + str2;	//MoveConstructor
+	//String str3;
 	str3 = str1 + str2;
 	//str3.print();
 	cout << str3 << endl;
+	String str4 = str3;
+	cout << str4 << endl;
 #endif // MOVE_METHODS_CHECK
 
 #ifdef CALLING_CONSTRUCTORS
