@@ -24,25 +24,21 @@ public:
 
 	//		Constructors:
 
-	explicit String(int size = 80)
+	explicit String(int size = 80):size(size), str(new char[size] {})
 	{
-		this->size = size;
-		this->str = new char[size] {};
+		//this->size = size;
+		//this->str = new char[size] {};
 		cout << "Def1aConstructor:\t" << this << endl;
 	}
-	String(const char* str)
+	String(const char* str):size(strlen(str)+1), str(new char[size] {})
 	{
-		this->size = strlen(str) + 1;
-		this->str = new char[size] {};
 		for (int i = 0; i < size; i++)this->str[i] = str[i];
 		cout << "Constructor:\t" << this << endl;
 	}
-	String(const String& other)
+	String(const String& other):size(other.size), str(new char[size] {})
 	{
 		// CopyConstructor должен выполнять DeepCopy (побитовое копирование)
 		// т.е. выделить новую память, и скопировать в нее содержимое другого объекта.
-		this->size = other.size;
-		this->str = new char[size] {};
 		for (int i = 0; i < size; i++)
 		{
 			this->str[i] = other.str[i];
@@ -51,11 +47,9 @@ public:
 		cout << "CopyConstructor:\t" << this << endl;
 			
 	}
-	String(String&& other)
+	String(String&& other):size(other.size), str(other.str)
 	{
 		// MoveConstuctor выполняет ShellowCopy (поверхностное копирование)
-		this->size = other.size;
-		this->str = other.str;	//копируем адрес памяти
 		other.size = 0;
 		other.str = nullptr;	//Зануляем адрес памяти в другом объекте, чтобы эту память не удалил диструктор
 		cout << "MoveConstructor:\t" << this << endl;
@@ -130,6 +124,7 @@ std::ostream& operator<<(std::ostream& os, const String& obj)
 
 //#define COSTRUCTORS_CHECK
 //#define MOVE_METHODS_CHECK
+#define CALLING_CONSTRUCTORS
 
 void main()
 {
@@ -166,6 +161,7 @@ void main()
 	cout << str3 << endl;
 #endif // MOVE_METHODS_CHECK
 
+#ifdef CALLING_CONSTRUCTORS
 	String str1;			//Default constructor
 	String str2(55);		//Single-argument constructor
 	String str3 = "Hello";	//Single-argument constructor (const char* || const char)
@@ -179,6 +175,8 @@ void main()
 					 и возвращает объект класса String
 	String str7{};	// Явный вызов конструкции по умолчанию
 	str7.print();
+#endif // CALLING_CONSTRUCTORS
+
 
 
 
