@@ -51,6 +51,15 @@ public:
 		cout << "CopyConstructor:\t" << this << endl;
 			
 	}
+	String(String&& other)
+	{
+		// MoveConstuctor выполняет ShellowCopy (поверхностное копирование)
+		this->size = other.size;
+		this->str = other.str;	//копируем адрес памяти
+		other.size = 0;
+		other.str = nullptr;	//Зануляем адрес памяти в другом объекте, чтобы эту память не удалил диструктор
+		cout << "MoveConstructor:\t" << this << endl;
+	}
 	~String()
 	{
 		delete[] this->str;
@@ -60,7 +69,6 @@ public:
 	//			Operators:
 	String& operator=(const String& other)
 	{
-	
 		if (this == &other)return *this;
 		delete[] this->str;
 		this->size = other.size;
@@ -68,6 +76,16 @@ public:
 		for (int i = 0; i < size; i++)this->str[i] = other.str[i];
 		cout << "CopyAssigment:\t" << this << endl;
 		return *this;
+	}
+	String& operator=(String&& other)
+	{
+		delete[] this->str;
+		this->size = other.size;
+		this->str = other.str;
+		other.size = 0;
+		other.str = nullptr;
+		cout << "MoveAssignment:\t" << this << endl;
+		return*this;
 	}
 	const char& operator[](int i)const
 	{
@@ -108,13 +126,16 @@ std::ostream& operator<<(std::ostream& os, const String& obj)
 	return os << obj.get_str();
 }
 
-//#define COSTRUCTORS_CHEK
+
+
+//#define COSTRUCTORS_CHECK
+//#define MOVE_METHODS_CHECK
 
 void main()
 {
 	setlocale(LC_ALL, "");
 	
-#ifdef COSTRUCTORS_CHEK
+#ifdef COSTRUCTORS_CHECK
 	String str1;		//Default constructor
 	str1.print();
 
@@ -131,14 +152,34 @@ void main()
 	String str5;
 	str5 = str4;			//CopyAssignment
 	str5.print();
-#endif // COSTRUCTORS_CHEK
+#endif // COSTRUCTORS_CHECK
 
+#ifdef MOVE_METHODS_CHECK
 	String str1 = "Hello";
 	cout << str1 << endl;
-	String str2 ("World");
+	String str2("World");
 	cout << str2 << endl;
-	String str3 = str1 + " " + str2;
+	//String str3 = str1 + " " + str2;	//MoveConstructor
+	String str3;
+	str3 = str1 + str2;
 	//str3.print();
 	cout << str3 << endl;
+#endif // MOVE_METHODS_CHECK
+
+	String str1;			//Default constructor
+	String str2(55);		//Single-argument constructor
+	String str3 = "Hello";	//Single-argument constructor (const char* || const char)
+	String str4 = str3;		//Copy constructor
+	String str5;
+	str5 = str4;			//Copy assignment
+	str5.print();
+	String str6();	// здесь НЕ вызывается никаких конструкторов, и следовательно \
+						НЕ создается объект
+					//Здесь объявляется функция str(6) которая ничего не принимает \
+					 и возвращает объект класса String
+	String str7{};	// Явный вызов конструкции по умолчанию
+	str7.print();
+
+
 
 }
